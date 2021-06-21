@@ -1,25 +1,37 @@
-import logo from './logo.svg';
 import './App.css';
+import React, { Component } from 'react';
+import Scanner from '../src/components/Scanner';
+import Result from '../src/components/Result';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      scanning: false,
+      results: []
+    };
+    this._scan = this._scan.bind(this);
+    this._onDetected = this._onDetected.bind(this);
+  }
+
+  _scan() {
+    this.setState({ scanning: !this.state.scanning });
+  }
+
+  _onDetected(result) {
+    this.setState({ results: this.state.results.concat([result]) });
+  }
+  render() {
+    return (
+      <div>
+        <button onClick={this._scan}>{this.state.scanning ? 'Stop' : 'Start'}</button>
+        <ul className="results">
+          {this.state.results.map((result, idx) => {
+            return (<Result key={result.codeResult.code} result={result} />)
+          })}
+        </ul>
+        {this.state.scanning ? <Scanner onDetected={(result) => this._onDetected(result)} /> : null}
+      </div>
+    );
+  }
 }
-
-export default App;
